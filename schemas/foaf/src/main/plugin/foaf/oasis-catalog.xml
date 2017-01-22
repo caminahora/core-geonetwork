@@ -5,9 +5,9 @@
             uri="schema/xml.xsd"/>
           
           
-    <system uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#" systemId="RDF.xsd"/>
-    <system uri="http://www.europeana.eu/schemas/edm/" systemId="EDM-COMMON-MAIN.xsd"/>
-    <system uri="http://purl.org/dc/elements/1.1/" systemId="DC.xsd"/>
-    <system uri="http://www.w3.org/2004/02/skos/core#" systemId="SKOS.xsd" />
+    <system uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#" systemId="schema/RDF.xsd"/>
+    <system uri="http://www.europeana.eu/schemas/edm/" systemId="schema/EDM-COMMON-MAIN.xsd"/>
+    <system uri="http://purl.org/dc/elements/1.1/" systemId="schema/DC.xsd"/>
+    <system uri="http://www.w3.org/2004/02/skos/core#" systemId="schema/SKOS.xsd" />
 
 </catalog>

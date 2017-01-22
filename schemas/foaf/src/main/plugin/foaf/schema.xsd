@@ -11,13 +11,13 @@
   <xs:include schemaLocation="schema/FOAF.xsd" />
 
   <import namespace="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-    schemaLocation="RDF.xsd" />
+    schemaLocation="schema/RDF.xsd" />
   <import namespace="http://www.europeana.eu/schemas/edm/"
-    schemaLocation="EDM-COMMON-MAIN.xsd" />
+    schemaLocation="schema/EDM-COMMON-MAIN.xsd" />
   <import namespace="http://purl.org/dc/elements/1.1/"
-    schemaLocation="DC.xsd" />
+    schemaLocation="schema/DC.xsd" />
   <import namespace="http://www.w3.org/2004/02/skos/core#"
-    schemaLocation="SKOS.xsd" />
+    schemaLocation="schema/SKOS.xsd" />
 
 
   <!-- add a blank type to deal with this dumb declaration -->
