@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema xmlns="http://geonetwork-opensource.org/schemas/schema-ident"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://geonetwork-opensource.org/schemas/schema-ident 
+  http://geonetwork-opensource.org/schemas/schema-ident/schema-ident.xsd">
+  <name>foaf</name>
+  <id>c008ec493ada454353df4aa4b2651723</id>
+  <version>0.1</version>
+  <schemaLocation>
+    http://www.w3.org/ns/dcat
+    http://purl.org/dc/terms/
+    http://purl.org/dc/dcmitype/
+    http://xmlns.com/foaf/0.1/
+    http://www.w3.org/1999/02/22-rdf-syntax-ns
+    http://www.w3.org/2000/01/rdf-schema
+    http://www.w3.org/2004/02/skos/core
+    http://www.w3.org/2006/vcard/ns
+    http://www.w3.org/2001/XMLSchema
+  </schemaLocation>
+  <autodetect xmlns:sml="http://xmlns.com/foaf/0.1">
+    <elements type="root">
+      <sml:SensorML />
+    </elements>
+  </autodetect>
+</schema>

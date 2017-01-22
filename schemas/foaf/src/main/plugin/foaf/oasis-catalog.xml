@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="public">
+
+  <system systemId="http://www.w3.org/2001/xml.xsd"
+            uri="schema/xml.xsd"/>
+          
+          
+    <system uri="http://www.w3.org/1999/02/22-rdf-syntax-ns#" systemId="RDF.xsd"/>
+    <system uri="http://www.europeana.eu/schemas/edm/" systemId="EDM-COMMON-MAIN.xsd"/>
+    <system uri="http://purl.org/dc/elements/1.1/" systemId="DC.xsd"/>
+    <system uri="http://www.w3.org/2004/02/skos/core#" systemId="SKOS.xsd" />
+
+</catalog>

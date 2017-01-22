@@ -472,20 +472,9 @@
     having a custom Bean to be loaded. -->
     <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>schema-iso19139</artifactId>
+      <artifactId>schema-foaf</artifactId>
       <version>${project.version}</version>
     </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>schema-iso19110</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>schema-dublin-core</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-
     <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>solr-bridge</artifactId>
@@ -567,17 +556,7 @@
                 in order to be loaded by the application when running mvn jetty:run.
                 -->
                 <resource>
-                  <directory>${project.basedir}/../schemas/iso19139/src/main/plugin</directory>
-                  <targetPath>${basedir}/src/main/webapp/WEB-INF/data/config/schema_plugins
-                  </targetPath>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../schemas/iso19110/src/main/plugin</directory>
-                  <targetPath>${basedir}/src/main/webapp/WEB-INF/data/config/schema_plugins
-                  </targetPath>
-                </resource>
-                <resource>
-                  <directory>${project.basedir}/../schemas/dublin-core/src/main/plugin</directory>
+                  <directory>${project.basedir}/../schemas/foaf/src/main/plugin</directory>
                   <targetPath>${basedir}/src/main/webapp/WEB-INF/data/config/schema_plugins
                   </targetPath>
                 </resource>
