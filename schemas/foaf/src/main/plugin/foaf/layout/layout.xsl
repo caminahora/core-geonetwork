@@ -13,12 +13,12 @@
   <xsl:include href="utility-tpl.xsl"/>
 
   <!-- Ignore all gn element -->
-  <xsl:template mode="mode-sensorML"
+  <xsl:template mode="mode-foaf"
                 match="gn:*|@gn:*|@*"
                 priority="1000"/>
 
   <!-- Ignore group element. -->
-  <xsl:template mode="mode-sensorML"
+  <xsl:template mode="mode-foaf"
                 match="gml:*[starts-with(name(.), 'gml:TimePeriodTypeGROUP_ELEMENT')]"
                 priority="1000"/>
 
@@ -26,7 +26,7 @@
   <!-- Template to display non existing element ie. geonet:child element
 	of the metadocument. Display in editing mode only and if 
   the editor mode is not flat mode. -->
-  <xsl:template mode="mode-sensorML" match="gn:child" priority="2000">
+  <xsl:template mode="mode-foaf" match="gn:child" priority="2000">
     <xsl:param name="schema" select="$schema" required="no"/>
     <xsl:param name="labels" select="$labels" required="no"/>
 
@@ -54,11 +54,11 @@
 
 
   <!-- Visit all XML tree recursively -->
-  <xsl:template mode="mode-sensorML" match="gmd:*|gmx:*|gml:*|srv:*|gts:*">
+  <xsl:template mode="mode-foaf" match="gmd:*|gmx:*|gml:*|srv:*|gts:*">
     <xsl:param name="schema" select="$schema" required="no"/>
     <xsl:param name="labels" select="$labels" required="no"/>
 
-    <xsl:apply-templates mode="mode-sensorML" select="*|@*">
+    <xsl:apply-templates mode="mode-foaf" select="*|@*">
       <xsl:with-param name="schema" select="$schema"/>
       <xsl:with-param name="labels" select="$labels"/>
     </xsl:apply-templates>
@@ -72,7 +72,7 @@
       * and gmd:*: Match all elements having gmd child elements
       * and not(gco:CharacterString): Don't take into account those having gco:CharacterString (eg. multilingual elements)
   -->
-  <xsl:template mode="mode-sensorML" priority="200"
+  <xsl:template mode="mode-foaf" priority="200"
     match="*[name() = $editorConfig/editor/fieldsWithFieldset/name 
     or @gco:isoType = $editorConfig/editor/fieldsWithFieldset/name]|
       gmd:report/*|
@@ -115,7 +115,7 @@
         <!-- Process child of those element. Propagate schema
         and labels to all subchilds (eg. needed like iso19110 elements
         contains gmd:* child. -->
-        <xsl:apply-templates mode="mode-sensorML" select="*">
+        <xsl:apply-templates mode="mode-foaf" select="*">
           <xsl:with-param name="schema" select="$schema"/>
           <xsl:with-param name="labels" select="$labels"/>
         </xsl:apply-templates>
@@ -127,7 +127,7 @@
 
 
   <!-- Render simple element which usually match a form field -->
-  <xsl:template mode="mode-sensorML" priority="200"
+  <xsl:template mode="mode-foaf" priority="200"
     match="*[gco:CharacterString|gco:Integer|gco:Decimal|
        gco:Boolean|gco:Real|gco:Measure|gco:Length|gco:Distance|gco:Angle|gmx:FileName|
        gco:Scale|gco:Record|gco:RecordType|gmx:MimeFileType|gmd:URL|gco:LocalName|gmd:PT_FreeText]">
@@ -291,7 +291,7 @@
   <!-- Display UUIDREF attribute with the parent element name
    as read only. The associated resource panel is used to edit
     those values. -->
-  <xsl:template mode="mode-sensorML" match="@uuidref" priority="2000">
+  <xsl:template mode="mode-foaf" match="@uuidref" priority="2000">
     <xsl:call-template name="render-element">
       <xsl:with-param name="label" select="gn-fn-metadata:getLabel($schema, name(..), $labels)/label"/>
       <xsl:with-param name="value" select="."/>
@@ -307,7 +307,7 @@
 
 
 <!--
-  <xsl:template mode="mode-sensorML" priority="200"
+  <xsl:template mode="mode-foaf" priority="200"
     match="*[gco:Date|gco:DateTime]">
     <xsl:param name="schema" select="$schema" required="no"/>
     <xsl:param name="labels" select="$labels" required="no"/>
@@ -350,7 +350,7 @@
     <geonet:attribute name="codeSpace" add="true"/>
   
   -->
-  <xsl:template mode="mode-sensorML" priority="200" match="*[*/@codeList]">
+  <xsl:template mode="mode-foaf" priority="200" match="*[*/@codeList]">
     <xsl:param name="schema" select="$schema" required="no"/>
     <xsl:param name="labels" select="$labels" required="no"/>
     <xsl:param name="codelists" select="$iso19139codelists" required="no"/>
@@ -390,7 +390,7 @@
       <geonet:text value="biota"/>
       <geonet:text value="boundaries"/
   -->
-  <xsl:template mode="mode-sensorML" match="*[gn:element/gn:text]">
+  <xsl:template mode="mode-foaf" match="*[gn:element/gn:text]">
     <xsl:param name="schema" select="$schema" required="no"/>
     <xsl:param name="labels" select="$labels" required="no"/>
     <xsl:param name="codelists" select="$iso19139codelists" required="no"/>
@@ -410,7 +410,7 @@
 
 
   <!-- the gml element having no child eg. gml:name. -->
-  <xsl:template mode="mode-sensorML" priority="100" match="gml:*[count(.//gn:element) = 1]">
+  <xsl:template mode="mode-foaf" priority="100" match="gml:*[count(.//gn:element) = 1]">
     <xsl:variable name="name" select="name(.)"/>
 
     <xsl:variable name="labelConfig" select="gn-fn-metadata:getLabel($schema, $name, $labels)"/>

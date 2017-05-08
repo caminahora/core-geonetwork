@@ -1,0 +1,9 @@
+<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/">
+  <foaf:Person rdf:about="#danbri">
+    <foaf:name>Guybrush Threeepwood</foaf:name>
+    <foaf:homepage rdf:resource="http://elaine.gov/" />
+    <foaf:openid rdf:resource="http://threeheadedmonkey.island" />
+    <foaf:img rdf:resource="/images/me.jpg" />
+  </foaf:Person>
+</rdf:RDF>

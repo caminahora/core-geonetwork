@@ -75,11 +75,6 @@
   <xsl:variable name="codelists" select="$schemaInfo/codelists"/>
   <xsl:variable name="strings" select="$schemaInfo/strings"/>
 
-  <xsl:variable name="iso19139schema" select="/root/gui/schemas/iso19139"/>
-  <xsl:variable name="iso19139labels" select="$iso19139schema/labels"/>
-  <xsl:variable name="iso19139codelists" select="$iso19139schema/codelists"/>
-  <xsl:variable name="iso19139strings" select="$iso19139schema/strings"/>
-
   <xsl:variable name="isEditing"
                 select="$service = 'md.edit'
                 or $service = 'embedded'
@@ -97,9 +92,9 @@
     <saxon:call-template name="{concat('get-', $schema, '-configuration')}"/>
   </xsl:variable>
 
-  <xsl:variable name="iso19139EditorConfig">
+  <xsl:variable name="foafEditorConfig">
     <!-- TODO only load for ISO profiles -->
-    <xsl:call-template name="get-iso19139-configuration"/>
+    <xsl:call-template name="get-foaf-configuration"/>
   </xsl:variable>
 
 

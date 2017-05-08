@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<editor xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-	xmlns:swe="http://www.opengis.net/swe/1.0.1" 
-	xmlns:gml="http://www.opengis.net/gml" 
-	xmlns:xlink="http://www.w3.org/1999/xlink"
+<editor xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#" 
 	xsi:noNamespaceSchemaLocation="../../../../../../config-editor.xsd"
 	xmlns:gn="http://www.fao.org/geonetwork"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -22,8 +21,8 @@
 	<views>
 	
 		<view name="advanced">
-			<tab id="member" default="true">
-        <section xpath="/sml:SensorML"></section>
+			<tab id="rdf" default="true">
+        <section xpath="/rdf:RDF"></section>
  			</tab>
     </view>
     

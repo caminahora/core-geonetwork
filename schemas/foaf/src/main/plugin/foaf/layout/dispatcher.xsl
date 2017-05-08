@@ -13,16 +13,16 @@
   <xsl:include href="evaluate.xsl"/>
   <xsl:include href="layout.xsl"/>
 
-  <xsl:template name="get-sensorML-configuration">
+  <xsl:template name="get-foaf-configuration">
     <xsl:copy-of select="document('config-editor.xml')"/>
   </xsl:template>
 
 
-  <xsl:template name="dispatch-sensorML">
+  <xsl:template name="dispatch-foaf">
     <xsl:param name="base" as="node()"/>
     <xsl:param name="overrideLabel" as="xs:string" required="no" select="''"/>
 
-    <xsl:apply-templates mode="mode-sensorML" select="$base">
+    <xsl:apply-templates mode="mode-foaf" select="$base">
       <xsl:with-param name="overrideLabel" select="$overrideLabel"/>
     </xsl:apply-templates>
   </xsl:template>

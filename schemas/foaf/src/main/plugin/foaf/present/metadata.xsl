@@ -1,15 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl ="http://www.w3.org/1999/XSL/Transform"
 	xmlns:exslt= "http://exslt.org/common"
-	xmlns:sml="http://www.opengis.net/sensorML/1.0.1"
-	xmlns:swe="http://www.opengis.net/swe/1.0.1" 
-	xmlns:gml="http://www.opengis.net/gml"
-	xmlns:geonet="http://www.fao.org/geonetwork"
-	xmlns:xlink="http://www.w3.org/1999/xlink"
-	xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" 
-	xmlns:ns2="http://www.w3.org/2004/02/skos/core#" 
-	xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"  
 	xmlns:xs="http://www.w3.org/2001/XMLSchema"
 	exclude-result-prefixes="sml swe gml geonet xlink rdf ns2 rdfs skos">
 
@@ -24,14 +18,14 @@
 	<xsl:variable name="thesaurusList" select="document(concat($url,'/xml.thesaurus.getList'))"/>
 
 	<!-- Template called by outside -->
-	<xsl:template name="metadata-sensorML">
+	<xsl:template name="metadata-foaf">
 	  <xsl:param name="schema"/>
 	  <xsl:param name="edit" select="false()"/>
 	  <xsl:param name="embedded"/>
 
 		<xsl:message>Processing <xsl:value-of select="name(.)"/> from <xsl:value-of select="$url"/></xsl:message>
 
-	  <xsl:apply-templates mode="sensorML" select="." >
+	  <xsl:apply-templates mode="foaf" select="." >
 	    <xsl:with-param name="schema" select="$schema"/>
 	    <xsl:with-param name="edit"   select="$edit"/>
 	    <xsl:with-param name="embedded" select="$embedded" />
@@ -39,17 +33,17 @@
 	</xsl:template>
 
 	<!-- No CompleteTab here -->
-	<xsl:template name="sensorMLCompleteTab">
+	<xsl:template name="foafCompleteTab">
 	  <xsl:param name="tabLink"/>
 	</xsl:template>
 
 	<!-- Main template -->
-	<xsl:template mode="sensorML" match="sml:SensorML">
+	<xsl:template mode="foaf" match="sml:foaf">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		<xsl:param name="embedded"/>
 
-		<xsl:call-template name="sensorMLSimple">
+		<xsl:call-template name="foafSimple">
 			<xsl:with-param name="schema" select="$schema"/>
 			<xsl:with-param name="edit"   select="$edit"/>
 		</xsl:call-template>
@@ -59,7 +53,7 @@
 	<!-- ===================================================================== -->
 
 	<!-- should work for *[@name]/*[@definition]/* -->
-	<xsl:template mode="sensorML" match="sml:*[sml:Term/sml:value]">
+	<xsl:template mode="foaf" match="sml:*[sml:Term/sml:value]">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -73,7 +67,7 @@
 		<xsl:variable name="thesaurusRef" select="concat('_',sml:Term/sml:codeSpace/geonet:element/@ref,'_xlinkCOLONhref')"/>
 		<xsl:message>Thesaurus: <xsl:value-of select="$thesaurus"/> Key: <xsl:value-of select="$thesaurusList/response/thesauri/thesaurus[ends-with(key,$thesaurus) and $thesaurus!='']/url"/></xsl:message>
 
-		<xsl:call-template name="sensorMLThesaurus">
+		<xsl:call-template name="foafThesaurus">
 			<xsl:with-param name="schema" select="$schema"/>
 			<xsl:with-param name="edit"   select="$edit"/>
 			<xsl:with-param name="label"   select="name()"/>
@@ -90,7 +84,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:input[swe:ObservableProperty]|sml:output[swe:ObservableProperty]">
+	<xsl:template mode="foaf" match="sml:input[swe:ObservableProperty]|sml:output[swe:ObservableProperty]">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -102,7 +96,7 @@
 		<xsl:variable name="defTermRef" select="concat('_', swe:ObservableProperty/geonet:element/@ref, '_definition')"/>
 		<xsl:message>Thesaurus: <xsl:value-of select="$thesaurus"/> Key: <xsl:value-of select="$thesaurusList/response/thesauri/thesaurus[ends-with(key,$thesaurus) and $thesaurus!='']/url"/></xsl:message>
 
-		<xsl:call-template name="sensorMLThesaurus">
+		<xsl:call-template name="foafThesaurus">
 			<xsl:with-param name="schema" select="$schema"/>
 			<xsl:with-param name="edit"   select="$edit"/>
 			<xsl:with-param name="label" select="name()"/>
@@ -119,7 +113,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template name="sensorMLThesaurus">
+	<xsl:template name="foafThesaurus">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		<xsl:param name="label"/>
@@ -135,19 +129,19 @@
 		<xsl:variable name="title">
 			<xsl:choose>
 				<xsl:when test="normalize-space($nameText)!=''">
-					<xsl:call-template name="getTitle-sensorML">
+					<xsl:call-template name="getTitle-foaf">
 						<xsl:with-param name="name"   select="$label"/>
 						<xsl:with-param name="schema" select="$schema"/>
 						<xsl:with-param name="id"     select="$nameText"/>
 					</xsl:call-template>
 				</xsl:when>
 				<xsl:otherwise>
-					<xsl:value-of select="/root/gui/schemas/sensorML/strings/term"/>		
+					<xsl:value-of select="/root/gui/schemas/foaf/strings/term"/>		
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:variable>
 		<xsl:variable name="helpLink">
-			<xsl:call-template name="getHelpLink-sensorML">
+			<xsl:call-template name="getHelpLink-foaf">
 				<xsl:with-param name="name" select="$label"/>
 				<xsl:with-param name="schema" select="$schema"/>
 				<xsl:with-param name="id" select="$nameText"/>
@@ -155,7 +149,7 @@
 		</xsl:variable>
 		<xsl:choose>
 			<xsl:when test="$edit=true()">
-				<xsl:call-template name="doSensorMLThesaurus">
+				<xsl:call-template name="dofoafThesaurus">
 					<xsl:with-param name="schema"   select="$schema"/>
 					<xsl:with-param name="edit"     select="$edit"/>
 					<xsl:with-param name="title"    select="$title"/>
@@ -189,10 +183,10 @@
 											<xsl:attribute name="style">display:block</xsl:attribute>
 											<table width="100%">
 												<tr>
-													<td><b><xsl:value-of select="/root/gui/schemas/sensorML/strings/term"/>:</b> <xsl:value-of select="$definition"/></td>
+													<td><b><xsl:value-of select="/root/gui/schemas/foaf/strings/term"/>:</b> <xsl:value-of select="$definition"/></td>
 												</tr>
 												<tr>
-													<td><b><xsl:value-of select="/root/gui/schemas/sensorML/strings/thesaurus"/>:</b> <xsl:value-of select="$thesaurus"/></td>
+													<td><b><xsl:value-of select="/root/gui/schemas/foaf/strings/thesaurus"/>:</b> <xsl:value-of select="$thesaurus"/></td>
 												</tr>
 											</table>
 										</xsl:if>
@@ -208,7 +202,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template name="doSensorMLThesaurus">
+	<xsl:template name="dofoafThesaurus">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		<xsl:param name="title"/>
@@ -246,7 +240,7 @@
 									 			- defTermRef = input to place term-uri in
 									 			- thesaurusRef = input to place thesaurus name in -->
 										<a style="cursor:pointer;" onclick="javascript:csiro.showThesaurusSelectionPanel('{$gnThesaurusTitle}','{$gnThesaurus}','{$ref}','{$defTermRef}','{$thesaurusRef}');">
-											<img src="{/root/gui/url}/images/find.png" alt="{/root/gui/schemas/sensorML/strings/thesaurusPicker}" title="{/root/gui/schemas/sensorML/strings/thesaurusPicker}"/>
+											<img src="{/root/gui/url}/images/find.png" alt="{/root/gui/schemas/foaf/strings/thesaurusPicker}" title="{/root/gui/schemas/foaf/strings/thesaurusPicker}"/>
 										</a>
 									</td>
 									<xsl:if test="normalize-space($nameRef)!=''">
@@ -263,10 +257,10 @@
 								<table width="100%">
 									<tr>
 										<td>
-											<xsl:value-of select="/root/gui/schemas/sensorML/strings/thesaurus"/>: <input class="md" id="{$thesaurusRef}" name="{$thesaurusRef}" value="{$thesaurus}" readonly="enabled"/>
+											<xsl:value-of select="/root/gui/schemas/foaf/strings/thesaurus"/>: <input class="md" id="{$thesaurusRef}" name="{$thesaurusRef}" value="{$thesaurus}" readonly="enabled"/>
 				    				</td>
 				    				<td>
-											<xsl:value-of select="/root/gui/schemas/sensorML/strings/termId"/>: <input class="md" id="{$defTermRef}" name="{$defTermRef}" value="{$definition}" readonly="enabled"/>
+											<xsl:value-of select="/root/gui/schemas/foaf/strings/termId"/>: <input class="md" id="{$defTermRef}" name="{$defTermRef}" value="{$definition}" readonly="enabled"/>
 				    				</td>
 									</tr>
 								</table>
@@ -281,7 +275,7 @@
 	<!-- ==================================================================== -->
 
 	<!-- Template for simple edit view -->
-	<xsl:template name="sensorMLSimple">
+	<xsl:template name="foafSimple">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -290,7 +284,7 @@
 		<xsl:call-template name="complexElementGuiWrapper">
 			<xsl:with-param name="schema" select="$schema"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="'sml:identification'"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id" select="'site'"/>
@@ -334,14 +328,14 @@
 				<!-- Abstract -->
 				<xsl:choose>
 					<xsl:when test="$edit">
-						<xsl:apply-templates mode="sensorML" select="sml:member/*/sml:System/*/*/gml:description">
+						<xsl:apply-templates mode="foaf" select="sml:member/*/sml:System/*/*/gml:description">
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="edit"   select="$edit"/>
 							<xsl:with-param name="id"     select="'abstract'"/>
 						</xsl:apply-templates>	
 					</xsl:when>
 					<xsl:otherwise>
-						<xsl:apply-templates mode="sensorML" select="sml:member/sml:System/gml:description">
+						<xsl:apply-templates mode="foaf" select="sml:member/sml:System/gml:description">
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="edit"   select="$edit"/>
 							<xsl:with-param name="id"     select="'abstract'"/>
@@ -418,7 +412,7 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:location'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="id" select="'site'"/>
@@ -458,7 +452,7 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'swe:field'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="id" select="'observedBBOX'"/>
@@ -467,7 +461,7 @@
 					<xsl:with-param name="realname" select="'swe:field_observedBBOX'"/>
 					<xsl:with-param name="content">
 						<xsl:if test="$edit">
-							<p style="padding:10px"><xsl:value-of select="/root/gui/schemas/sensorML/strings/bbox" /></p>
+							<p style="padding:10px"><xsl:value-of select="/root/gui/schemas/foaf/strings/bbox" /></p>
 						</xsl:if>
 
 						<xsl:choose>
@@ -515,14 +509,14 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:history'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
 					</xsl:with-param>
 					<xsl:with-param name="realname" select="'sml:history'"/>
 					<xsl:with-param name="helpLink">
-						<xsl:call-template name="getHelpLink-sensorML">
+						<xsl:call-template name="getHelpLink-foaf">
 							<xsl:with-param name="name"   select="'sml:history'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						 </xsl:call-template>
@@ -550,7 +544,7 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:DocumentList'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="id" select="'documents'"/>
@@ -580,7 +574,7 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:DocumentList'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="id" select="'datasets'"/>
@@ -611,7 +605,7 @@
 					<xsl:with-param name="edit"   select="$edit"/>
 	
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:contact'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
@@ -639,7 +633,7 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:identification'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="id" select="'sensor'"/>
@@ -677,7 +671,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:component" priority="30">
+	<xsl:template mode="foaf" match="sml:component" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -685,13 +679,13 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"   select="$edit"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 				</xsl:call-template>
 			</xsl:with-param>
 			<xsl:with-param name="helpLink">
-				<xsl:call-template name="getHelpLink-sensorML">
+				<xsl:call-template name="getHelpLink-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 				</xsl:call-template>
@@ -703,13 +697,13 @@
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'name'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
 					</xsl:with-param>
 					<xsl:with-param name="helpLink">
-						<xsl:call-template name="getHelpLink-sensorML">
+						<xsl:call-template name="getHelpLink-foaf">
 							<xsl:with-param name="name"   select="'name'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
@@ -717,14 +711,14 @@
 				</xsl:apply-templates>
 
 				<xsl:variable name="empty">
-					<xsl:apply-templates mode="sensorMLIsEmpty" select="sml:Component"/>
+					<xsl:apply-templates mode="foafIsEmpty" select="sml:Component"/>
 				</xsl:variable>
 
 				<!-- if there is a Component child then we have to display and maybe
 				     edit its content unless it is a resolved xlink of course -->
 				<xsl:choose>
 					<xsl:when test="normalize-space($empty)!=''">
-						<xsl:apply-templates mode="sensorML" select="sml:Component">
+						<xsl:apply-templates mode="foaf" select="sml:Component">
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="edit"   select="$edit"/>
 						</xsl:apply-templates>
@@ -734,7 +728,7 @@
 							<xsl:with-param name="schema" select="$schema"/>
            		<xsl:with-param name="edit"   select="$edit"/>
 							<xsl:with-param name="title">
-								<xsl:call-template name="getTitle-sensorML">
+								<xsl:call-template name="getTitle-foaf">
 									<xsl:with-param name="name"   select="'xlink:href'"/>
 									<xsl:with-param name="schema" select="$schema"/>
 									<xsl:with-param name="context" select="'sml:component'"/>
@@ -745,7 +739,7 @@
 						<xsl:choose>
 							<xsl:when test="$edit">
 			<!-- if editing offer the use the ability to choose a component
-			     from list of metadata records (confined to sensorML component
+			     from list of metadata records (confined to foaf component
 					 subtemplates) -->
 								<xsl:variable name="value" select="@xlink:href"/>
 								<xsl:variable name="ref" select="concat('_',geonet:element/@ref,'_xlinkCOLONhref')"/>
@@ -784,12 +778,12 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:Component" priority="30">
+	<xsl:template mode="foaf" match="sml:Component" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
 		<!-- Sensor description -->
-    <xsl:apply-templates mode="sensorML" select="*/gml:description|gml:description">
+    <xsl:apply-templates mode="foaf" select="*/gml:description|gml:description">
 			<xsl:with-param name="schema" select="$schema"/>
 			<xsl:with-param name="edit"   select="$edit"/>
 		</xsl:apply-templates>
@@ -822,7 +816,7 @@
 		<xsl:call-template name="complexElementGuiWrapper">
 			<xsl:with-param name="schema"     select="$schema"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="'sml:location'"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id"     select="'sensor'"/>
@@ -848,7 +842,7 @@
 				<xsl:call-template name="complexElementGuiWrapper">
 					<xsl:with-param name="schema"     select="$schema"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'swe:field'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="id" select="'observedBBOX'"/>
@@ -880,7 +874,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:member[descendant::sml:Event]" priority="30">
+	<xsl:template mode="foaf" match="sml:member[descendant::sml:Event]" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -896,13 +890,13 @@
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'name'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
 					</xsl:with-param>
 					<xsl:with-param name="helpLink">
-						<xsl:call-template name="getHelpLink-sensorML">
+						<xsl:call-template name="getHelpLink-foaf">
 							<xsl:with-param name="name"   select="'name'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
@@ -916,7 +910,7 @@
 				</xsl:apply-templates>
 
 				<!-- gml:description in 5 row box -->
-				<xsl:apply-templates mode="sensorML" select="sml:Event/gml:description">
+				<xsl:apply-templates mode="foaf" select="sml:Event/gml:description">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 					<xsl:with-param name="rows"   select="5"/>
@@ -946,7 +940,7 @@
 
 	<!-- TODO: sml:keyword should be chosen from a thesaurus -->
 
-	<xsl:template mode="sensorML" match="sml:keyword">
+	<xsl:template mode="foaf" match="sml:keyword">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -965,14 +959,14 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"    select="$edit"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id"     select="$id"/>
 				</xsl:call-template>
 			</xsl:with-param>
 			<xsl:with-param name="helpLink">
-				<xsl:call-template name="getHelpLink-sensorML">
+				<xsl:call-template name="getHelpLink-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id"     select="$id"/>
@@ -983,7 +977,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:date">
+	<xsl:template mode="foaf" match="sml:date">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -991,7 +985,7 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"    select="$edit"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 				</xsl:call-template>
@@ -1017,7 +1011,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:member[descendant::sml:Document]" priority="30">
+	<xsl:template mode="foaf" match="sml:member[descendant::sml:Document]" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1040,14 +1034,14 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"   select="$edit"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id"     select="$documentName"/>
 				</xsl:call-template>
 			</xsl:with-param>
 			<xsl:with-param name="helpLink">
-				<xsl:call-template name="getHelpLink-sensorML">
+				<xsl:call-template name="getHelpLink-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id"     select="$documentName"/>
@@ -1060,13 +1054,13 @@
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 					<xsl:with-param name="helpLink">
-						<xsl:call-template name="getHelpLink-sensorML">
+						<xsl:call-template name="getHelpLink-foaf">
 							<xsl:with-param name="name"   select="'xlink:href'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
 					</xsl:with-param>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'xlink:href'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template> 
@@ -1099,7 +1093,7 @@
 				</xsl:apply-templates>
 
 				<!-- description -->
-				<xsl:apply-templates mode="sensorML" select="sml:Document/gml:description">
+				<xsl:apply-templates mode="foaf" select="sml:Document/gml:description">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 					<xsl:with-param name="rows"   select="5"/>
@@ -1119,12 +1113,12 @@
 	<!-- ==================================================================== -->
 
 	<!-- Get list of countries from XPaths and display for sml:country -->
-	<xsl:template mode="sensorML" match="sml:country">
+	<xsl:template mode="foaf" match="sml:country">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		
 		<xsl:variable name="tooltip">
-			<xsl:call-template name="getTooltipTitle-sensorML">
+			<xsl:call-template name="getTooltipTitle-foaf">
 					<xsl:with-param name="name"   select="name(.)"/>
 					<xsl:with-param name="schema" select="$schema"/>
 			</xsl:call-template>
@@ -1156,7 +1150,7 @@
 				</xsl:apply-templates>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:call-template name="sensorMLString">
+				<xsl:call-template name="foafString">
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 				</xsl:call-template>
@@ -1167,7 +1161,7 @@
 	<!-- ==================================================================== -->
 
 	<!-- Template for metadata effective date -->
-	<xsl:template mode="sensorML" match="sml:validTime" priority="30">
+	<xsl:template mode="foaf" match="sml:validTime" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		
@@ -1205,12 +1199,12 @@
 	<!-- ==================================================================== -->
 
 	<!-- Handle GeoNetwork-UUID or $ogcID in sml:identifier -->
-	<xsl:template mode="sensorML" match="sml:identifier[@name='GeoNetwork-UUID' or @name=$ogcID]" priority="10">
+	<xsl:template mode="foaf" match="sml:identifier[@name='GeoNetwork-UUID' or @name=$ogcID]" priority="10">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		
 		<xsl:variable name="tooltip">
-			<xsl:call-template name="getTooltipTitle-sensorML">
+			<xsl:call-template name="getTooltipTitle-foaf">
 				<xsl:with-param name="name"   select="name(.)"/>
 				<xsl:with-param name="schema" select="$schema"/>
 				<xsl:with-param name="id" select="'GeoNetwork-UUID'"/>
@@ -1221,14 +1215,14 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"    select="false()"/>
 			<xsl:with-param name="helpLink">
-				<xsl:call-template name="getHelpLink-sensorML">
+				<xsl:call-template name="getHelpLink-foaf">
 					<xsl:with-param name="name"   select="name(.)"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id" select="'GeoNetwork-UUID'"/>
 				</xsl:call-template>
 			</xsl:with-param>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name(.)"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id" select="'GeoNetwork-UUID'"/>
@@ -1252,7 +1246,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:IdentifierList|sml:ClassifierList|sml:InputList" priority="10">
+	<xsl:template mode="foaf" match="sml:IdentifierList|sml:ClassifierList|sml:InputList" priority="10">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1260,7 +1254,7 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"    select="$edit"/>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name(.)"/>
 					<xsl:with-param name="schema" select="$schema"/>
 				</xsl:call-template>
@@ -1280,7 +1274,7 @@
 	<!-- ==================================================================== -->
 	<!-- handle both siteStatus and sensorStatus swe:field in 
        sml:capabilities/swe:DataRecord -->
-	<xsl:template mode="sensorML" match="swe:field[@name='sensorStatus' or @name='siteStatus']" priority="10">
+	<xsl:template mode="foaf" match="swe:field[@name='sensorStatus' or @name='siteStatus']" priority="10">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1298,7 +1292,7 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"    select="$edit"/>
 			<xsl:with-param name="helpLink">
-				<xsl:call-template name="getHelpLink-sensorML">
+				<xsl:call-template name="getHelpLink-foaf">
 					<xsl:with-param name="name"   select="$name"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id" select="$nameId"/>
@@ -1306,7 +1300,7 @@
 			</xsl:with-param>
 
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="$name"/>
 					<xsl:with-param name="schema" select="$schema"/>
 					<xsl:with-param name="id" select="$nameId"/>
@@ -1319,7 +1313,7 @@
 						<!-- Look for the helper (ie. suggestions) in localized 
                  labels.xml -->
     				<xsl:variable name="helper">
-          		<xsl:copy-of select="/root/gui/schemas/sensorML/labels/element[@name = $name and @id=$nameId]/helper"/>
+          		<xsl:copy-of select="/root/gui/schemas/foaf/labels/element[@name = $name and @id=$nameId]/helper"/>
     				</xsl:variable>
 						<xsl:variable name="list" select="exslt:node-set($helper)"/>
 						<input name="_{$refId}" id="_{$refId}" value="{$value}" type="hidden"/>
@@ -1372,7 +1366,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="swe:field[@name='observedBBOX']" priority="60">
+	<xsl:template mode="foaf" match="swe:field[@name='observedBBOX']" priority="60">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1433,7 +1427,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="swe:coordinate[(@name='easting' or @name='northing' or @name='altitude' or @name='latitude' or @name='longitude') and ancestor::swe:location]" priority="20">
+	<xsl:template mode="foaf" match="swe:coordinate[(@name='easting' or @name='northing' or @name='altitude' or @name='latitude' or @name='longitude') and ancestor::swe:location]" priority="20">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1456,14 +1450,14 @@
 				<xsl:with-param name="schema"  select="$schema"/>
 				<xsl:with-param name="edit"    select="$edit"/>
 				<xsl:with-param name="helpLink">
-					<xsl:call-template name="getHelpLink-sensorML">
+					<xsl:call-template name="getHelpLink-foaf">
 						<xsl:with-param name="name"   select="$coordName"/>
 						<xsl:with-param name="schema" select="$schema"/>
 						<xsl:with-param name="id"     select="$coordNameId"/>
 					</xsl:call-template>
 				</xsl:with-param>
 				<xsl:with-param name="title">
-					<xsl:call-template name="getTitle-sensorML">
+					<xsl:call-template name="getTitle-foaf">
 						<xsl:with-param name="name"   select="$coordName"/>
 						<xsl:with-param name="schema" select="$schema"/>
 						<xsl:with-param name="id"     select="$coordNameId"/>
@@ -1490,10 +1484,10 @@
 							<td width="50%">
 								<xsl:choose>
 									<xsl:when test="$edit">
-								<xsl:value-of select="concat(/root/gui/schemas/sensorML/strings/units,': ')"/><input name="{concat('_',swe:uom/geonet:element/@ref,'_code')}" value="{string(swe:uom/@code)}" columns="20" class="md"/>
+								<xsl:value-of select="concat(/root/gui/schemas/foaf/strings/units,': ')"/><input name="{concat('_',swe:uom/geonet:element/@ref,'_code')}" value="{string(swe:uom/@code)}" columns="20" class="md"/>
 									</xsl:when>
 									<xsl:otherwise>
-								<xsl:value-of select="concat(/root/gui/schemas/sensorML/strings/units,': ',normalize-space(swe:uom/@code))"/>
+								<xsl:value-of select="concat(/root/gui/schemas/foaf/strings/units,': ',normalize-space(swe:uom/@code))"/>
 									</xsl:otherwise>
 								</xsl:choose>
 							</td>
@@ -1506,7 +1500,7 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template mode="sensorML" match="swe:Envelope[@name='altitude']" priority="10">
+			<xsl:template mode="foaf" match="swe:Envelope[@name='altitude']" priority="10">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 
@@ -1514,14 +1508,14 @@
 					<xsl:with-param name="schema"  select="$schema"/>
 					<xsl:with-param name="edit"    select="$edit"/>
 					<xsl:with-param name="title">
-						<xsl:value-of select="/root/gui/schemas/sensorML/strings/altitude"/>
+						<xsl:value-of select="/root/gui/schemas/foaf/strings/altitude"/>
 					</xsl:with-param>
 				</xsl:apply-templates>
 			</xsl:template>
 
 	<!-- ==================================================================== -->
 
-			<xsl:template mode="sensorML" match="sml:member[descendant::sml:ResponsibleParty]" priority="30">
+			<xsl:template mode="foaf" match="sml:member[descendant::sml:ResponsibleParty]" priority="30">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 				
@@ -1531,7 +1525,7 @@
 					<xsl:with-param name="schema"  select="$schema"/>
 					<xsl:with-param name="edit"   select="$edit"/>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"   select="'sml:ResponsibleParty'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 						</xsl:call-template>
@@ -1547,7 +1541,7 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template mode="sensorML" match="sml:ResponsibleParty">
+			<xsl:template mode="foaf" match="sml:ResponsibleParty">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 				
@@ -1574,7 +1568,7 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template mode="sensorML" match="sml:contactInfo">
+			<xsl:template mode="foaf" match="sml:contactInfo">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 				
@@ -1606,7 +1600,7 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template mode="sensorML" match="sml:phone">
+			<xsl:template mode="foaf" match="sml:phone">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 
@@ -1623,7 +1617,7 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template mode="sensorML" match="sml:address">
+			<xsl:template mode="foaf" match="sml:address">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 
@@ -1660,7 +1654,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:onlineResource" priority="30">
+	<xsl:template mode="foaf" match="sml:onlineResource" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1674,14 +1668,14 @@
 					<xsl:with-param name="schema"  select="$schema"/>
 					<xsl:with-param name="edit"    select="$edit"/>
 					<xsl:with-param name="helpLink">
-						<xsl:call-template name="getHelpLink-sensorML">
+						<xsl:call-template name="getHelpLink-foaf">
 							<xsl:with-param name="name"   select="'xlink:href'"/>
 							<xsl:with-param name="schema" select="$schema"/>
 							<xsl:with-param name="context" select="name()"/>
 						</xsl:call-template>
 					</xsl:with-param>
 					<xsl:with-param name="title">
-						<xsl:call-template name="getTitle-sensorML">
+						<xsl:call-template name="getTitle-foaf">
 							<xsl:with-param name="name"    select="'xlink:href'"/>
 							<xsl:with-param name="schema"  select="$schema"/>
 							<xsl:with-param name="context" select="name()"/>
@@ -1696,7 +1690,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="swe:Position/@referenceFrame" priority="30">
+	<xsl:template mode="foaf" match="swe:Position/@referenceFrame" priority="30">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -1704,13 +1698,13 @@
 			<xsl:with-param name="schema"  select="$schema"/>
 			<xsl:with-param name="edit"    select="$edit"/>
 			<xsl:with-param name="helpLink">
-				<xsl:call-template name="getHelpLink-sensorML">
+				<xsl:call-template name="getHelpLink-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 				</xsl:call-template>
 			</xsl:with-param>
 			<xsl:with-param name="title">
-				<xsl:call-template name="getTitle-sensorML">
+				<xsl:call-template name="getTitle-foaf">
 					<xsl:with-param name="name"   select="name()"/>
 					<xsl:with-param name="schema" select="$schema"/>
 				</xsl:call-template> 
@@ -1728,7 +1722,7 @@
 									<!-- showCRSSelectionPanel: ref - input id above
 									     useCode - false means use description, true use code -->
 									<a style="cursor:pointer;" onclick="javascript:csiro.showCRSSelectionPanel('{$ref}',false);">
-										<img src="{/root/gui/url}/images/find.png" alt="{/root/gui/schemas/sensorML/strings/crsPicker}" title="{/root/gui/schemas/sensorML/strings/crsPicker}"/>
+										<img src="{/root/gui/url}/images/find.png" alt="{/root/gui/schemas/foaf/strings/crsPicker}" title="{/root/gui/schemas/foaf/strings/crsPicker}"/>
 									</a>
 								</td>
 							</tr>
@@ -1746,12 +1740,12 @@
 
 			<!-- the following templates eat up things we don't care about -->
 
-			<xsl:template mode="simpleElement" match="sml:SensorML/@*" priority="11" />
+			<xsl:template mode="simpleElement" match="sml:foaf/@*" priority="11" />
 			<xsl:template mode="simpleElement" match="geonet:attribute" priority="11" />
 
 	<!-- ==================================================================== -->
 
-	<xsl:template name="getTitle-sensorML">
+	<xsl:template name="getTitle-foaf">
 		<xsl:param name="name" />
 		<xsl:param name="schema"/>
 		<xsl:param name="id" select="''"/>
@@ -1796,7 +1790,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template name="getHelpLink-sensorML">
+	<xsl:template name="getHelpLink-foaf">
 		<xsl:param name="name" />
 		<xsl:param name="schema"/>
 		<xsl:param name="id" select="''"/>
@@ -1831,7 +1825,7 @@
 
 	<!-- ==================================================================== -->
 
-	<xsl:template name="getTooltipTitle-sensorML">
+	<xsl:template name="getTooltipTitle-foaf">
 		<xsl:param name="name" />
 		<xsl:param name="schema"/>
 		<xsl:param name="id" select="''"/>
@@ -1877,7 +1871,7 @@
 	<!-- default: in simple mode display only the xml  -->
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="*|@*">
+	<xsl:template mode="foaf" match="*|@*">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 				
@@ -1890,7 +1884,7 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:variable name="empty">
-					<xsl:apply-templates mode="sensorMLIsEmpty" select="."/>
+					<xsl:apply-templates mode="foafIsEmpty" select="."/>
 				</xsl:variable>
 					
 				<xsl:if test="normalize-space($empty)!=''">
@@ -1907,7 +1901,7 @@
 	<!-- these elements should be boxed if they are shown at all -->
 	<!-- ==================================================================== -->
 
-	<xsl:template mode="sensorML" match="sml:System|sml:identification|sml:classification|sml:characteristics|sml:capabilities|sml:documentation|gml:location|sml:interfaces|sml:inputs|sml:outputs|sml:components|sml:contactInfo|sml:address|sml:phone">
+	<xsl:template mode="foaf" match="sml:System|sml:identification|sml:classification|sml:characteristics|sml:capabilities|sml:documentation|gml:location|sml:interfaces|sml:inputs|sml:outputs|sml:components|sml:contactInfo|sml:address|sml:phone">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 				
@@ -1921,13 +1915,13 @@
 	<!-- descriptions -->
 	<!-- ================================================================= -->
 
-	<xsl:template mode="sensorML" match="gml:description">
+	<xsl:template mode="foaf" match="gml:description">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 		<xsl:param name="rows"/>
 		<xsl:param name="id"/>
 			
-		<xsl:call-template name="sensorMLString">
+		<xsl:call-template name="foafString">
 			<xsl:with-param name="schema" select="$schema"/>
 			<xsl:with-param name="edit" select="$edit"/>
 			<xsl:with-param name="rows" select="$rows"/>
@@ -1937,7 +1931,7 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template name="sensorMLString">
+			<xsl:template name="foafString">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 				<xsl:param name="rows" select="1"/>
@@ -1945,14 +1939,14 @@
 				<xsl:param name="id"/>
 
 				<xsl:variable name="title">
-					<xsl:call-template name="getTitle-sensorML">
+					<xsl:call-template name="getTitle-foaf">
 						<xsl:with-param name="name"   select="name(.)"/>
 						<xsl:with-param name="schema" select="$schema"/>
 						<xsl:with-param name="id" select="$id"/>
 					</xsl:call-template>
 				</xsl:variable>
 				<xsl:variable name="helpLink">
-					<xsl:call-template name="getHelpLink-sensorML">
+					<xsl:call-template name="getHelpLink-foaf">
 						<xsl:with-param name="name"   select="name(.)"/>
 						<xsl:with-param name="schema" select="$schema"/>
 						<xsl:with-param name="id" select="$id"/>
@@ -1980,7 +1974,7 @@
 	<!-- gml:TimePeriod and gml:TimeInstant (format = %Y-%m-%dThh:mm:ss)	  -->
 	<!-- ================================================================== -->
 
-			<xsl:template mode="sensorML" match="gml:TimeInstant[gml:timePosition]" priority="2">
+			<xsl:template mode="foaf" match="gml:TimeInstant[gml:timePosition]" priority="2">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 
@@ -2019,10 +2013,10 @@
 			</xsl:template>
 
 	<!-- ================================================================= -->
-	<!-- === sensorML CHOICE_ELEMENT handling === -->
+	<!-- === foaf CHOICE_ELEMENT handling === -->
 	<!-- ================================================================= -->
 
-			<xsl:template mode="sensorML" match="*[contains(name(),'CHOICE_ELEMENT')]|*[contains(name(),'GROUP_ELEMENT')]|*[contains(name(),'SEQUENCE_ELEMENT')]|sml:member|sml:Term|sml:KeywordList|sml:ClassifierList|swe:Text" priority="2">
+			<xsl:template mode="foaf" match="*[contains(name(),'CHOICE_ELEMENT')]|*[contains(name(),'GROUP_ELEMENT')]|*[contains(name(),'SEQUENCE_ELEMENT')]|sml:member|sml:Term|sml:KeywordList|sml:ClassifierList|swe:Text" priority="2">
 				<xsl:param name="schema"/>
 				<xsl:param name="edit"/>
 				<xsl:param name="contact"/>
@@ -2058,18 +2052,18 @@
 			</xsl:template>
 
 			<!-- ================================================================= -->
-			<!-- === sensorML brief formatting === -->
+			<!-- === foaf brief formatting === -->
 			<!-- ================================================================= -->
 
-			<xsl:template name="sensorMLBrief">
+			<xsl:template name="foafBrief">
 				<metadata>
 					<xsl:choose>
 						<xsl:when test="geonet:info/isTemplate='s'">
-							<xsl:call-template name="sensorML-subtemplate"/>
+							<xsl:call-template name="foaf-subtemplate"/>
 							<xsl:copy-of select="geonet:info" copy-namespaces="no"/>
 						</xsl:when>
 						<xsl:otherwise>
-							<xsl:call-template name="sensorML-brief"/>
+							<xsl:call-template name="foaf-brief"/>
 						</xsl:otherwise>
 					</xsl:choose>
 				</metadata>
@@ -2077,7 +2071,7 @@
 
 			<!-- ================================================================= -->
 
-			<xsl:template name="sensorML-brief">
+			<xsl:template name="foaf-brief">
 				<xsl:variable name="id" select="geonet:info/id"/>
 					
 				<xsl:variable name="title" select="sml:member/sml:System/sml:identification/sml:IdentifierList/sml:identifier[@name='siteFullName']/sml:Term/sml:value" />
@@ -2142,11 +2136,11 @@
 			<!-- utilities -->
 			<!-- =============================================================== -->
 			
-			<xsl:template mode="sensorMLIsEmpty" match="*|@*">
+			<xsl:template mode="foafIsEmpty" match="*|@*">
 				<xsl:choose>
 					<!-- normal element -->
 					<xsl:when test="*">
-						<xsl:apply-templates mode="sensorMLIsEmpty"/>
+						<xsl:apply-templates mode="foafIsEmpty"/>
 					</xsl:when>
 					<!-- text element -->
 					<xsl:when test="string-length(.)!=0">txt</xsl:when>
@@ -2282,14 +2276,14 @@
 							<td align="center">
 										<input type="hidden" id="{concat('_',$nID)}" name="{concat('_',$nID)}" value="{$nEl/text()}"/>
 													<xsl:variable name="tooltip-north">
-															<xsl:call-template name="getTooltipTitle-sensorML">
+															<xsl:call-template name="getTooltipTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('n_', $titleId)"/>
 															</xsl:call-template>
 													</xsl:variable>
 													<xsl:variable name="title-north">
-															<xsl:call-template name="getTitle-sensorML">
+															<xsl:call-template name="getTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('n_', $titleId)"/>
@@ -2316,14 +2310,14 @@
 							<td  style="vertical-align:middle">
 									<input type="hidden" id="{concat('_',$wID)}" name="{concat('_',$wID)}"  value="{$wEl/text()}"/>
 													<xsl:variable name="tooltip-west">
-															<xsl:call-template name="getTooltipTitle-sensorML">
+															<xsl:call-template name="getTooltipTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('w_',$titleId)"/>
 															</xsl:call-template>
 													</xsl:variable>
 													<xsl:variable name="title-west">
-															<xsl:call-template name="getTitle-sensorML">
+															<xsl:call-template name="getTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('w_', $titleId)"/>
@@ -2358,14 +2352,14 @@
 							<td  style="vertical-align:middle">
 										<input type="hidden" id="{concat('_',$eID)}" name="{concat('_',$eID)}" value="{$eEl/text()}"/>
 													<xsl:variable name="tooltip-east">
-															<xsl:call-template name="getTooltipTitle-sensorML">
+															<xsl:call-template name="getTooltipTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('e_', $titleId)"/>
 															</xsl:call-template>
 													</xsl:variable>
 													<xsl:variable name="title-east">
-															<xsl:call-template name="getTitle-sensorML">
+															<xsl:call-template name="getTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('e_', $titleId)"/>
@@ -2390,14 +2384,14 @@
 							<td align="center">
 										<input type="hidden" id="{concat('_',$sID)}" name="{concat('_',$sID)}"  value="{$sEl/text()}"/>
 													<xsl:variable name="tooltip-south">
-															<xsl:call-template name="getTooltipTitle-sensorML">
+															<xsl:call-template name="getTooltipTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('s_', $titleId)"/>
 															</xsl:call-template>
 													</xsl:variable>
 													<xsl:variable name="title-south">
-															<xsl:call-template name="getTitle-sensorML">
+															<xsl:call-template name="getTitle-foaf">
 																	<xsl:with-param name="name"   select="'swe:coordinate'"/>
 																	<xsl:with-param name="schema" select="$schema"/>
 																	<xsl:with-param name="id" select="concat('s_', $titleId)"/>
@@ -2421,29 +2415,29 @@
 
 	<!-- ==================================================================== -->
 
-			<xsl:template name="sensorML-relatedResources">
+			<xsl:template name="foaf-relatedResources">
 				<xsl:param name="edit"/>
 
-				<xsl:variable name="metadata" select="/root/sml:SensorML"/>
-				<xsl:if test="geonet:info/schema = 'sensorML'">
+				<xsl:variable name="metadata" select="/root/sml:foaf"/>
+				<xsl:if test="geonet:info/schema = 'foaf'">
 
 					<xsl:variable name="uuid" select="$metadata/geonet:info/uuid"/>
 					
 					
 					<!-- Related elements -->			
-					<xsl:variable name="relatedDatasetsForSensorMLRecords" select="/root/gui/relation/sensorMLDataset/response/*[geonet:info]"/> <!-- Usually feature catalogues -->
+					<xsl:variable name="relatedDatasetsForfoafRecords" select="/root/gui/relation/foafDataset/response/*[geonet:info]"/> <!-- Usually feature catalogues -->
 
 
 								<!-- <xsl:variable name="relatedRecords" select="/root/gui/relation/fcats/response/*[geonet:info]"/> -->
 			
-					<xsl:if test="$relatedDatasetsForSensorMLRecords or $edit">
+					<xsl:if test="$relatedDatasetsForfoafRecords or $edit">
 
 								<div class="relatedElements">
-							<!-- Related datasets for sensorML -->
-							<xsl:if test="($relatedDatasetsForSensorMLRecords or $edit) and geonet:info/schema = 'sensorML'">
+							<!-- Related datasets for foaf -->
+							<xsl:if test="($relatedDatasetsForfoafRecords or $edit) and geonet:info/schema = 'foaf'">
 									<h3><xsl:value-of select="/root/gui/strings/Relateddata"/></h3>
 									
-										<xsl:for-each select="$relatedDatasetsForSensorMLRecords">
+										<xsl:for-each select="$relatedDatasetsForfoafRecords">
 											<img src="{/root/gui/url}/images/database.png"  title="{/root/gui/strings/associateService}" align="absmiddle" alt="{/root/gui/strings/dataset}"/>
 										<a class="arrow" href="metadata.show?uuid={geonet:info/uuid}">
 												<xsl:call-template name="getMetadataTitle">
@@ -2464,7 +2458,7 @@
 	<!-- subtemplates -->
 	<!-- =================================================================== -->
 
-	<xsl:template mode="sensorML" match="*[geonet:info/isTemplate='s']" priority="3">
+	<xsl:template mode="foaf" match="*[geonet:info/isTemplate='s']" priority="3">
 		<xsl:param name="schema"/>
 		<xsl:param name="edit"/>
 
@@ -2478,7 +2472,7 @@
 	<!-- === Javascript used by functions in this presentation XSLT          -->
 	<!-- =================================================================== -->
 
-	<xsl:template name="sensorML-javascript"/>
+	<xsl:template name="foaf-javascript"/>
 
 	<!-- ==================================================================== -->
 	<!-- Functions -->
